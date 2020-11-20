@@ -62,26 +62,8 @@ dependencies {
     testImplementation 'software.amazon.awssdk:sts'
 }
 
-//
-//test {
-//    def server = System.getenv('COMMANDER_SERVER') ?: findProperty('server') ?: 'localhost'
-//    def password = System.getenv('COMMANDER_PASSWORD') ?: findProperty('password') ?: 'changeme'
-//    systemProperties['COMMANDER_SERVER'] = server
-//    systemProperties['COMMANDER_SERVER'] = findProperty('server') ?: 'localhost'
-//    systemProperties['COMMANDER_PASSWORD'] = password
-//}
-
-//test {
-//    useJUnitPlatform()
-//}
-
 
 sendAllureReports {
     projectName = 'awscli'
 }
 
-//configureTests {
-//    environmentName = findProperty('envName') ?: 'default'
-//    readEnvironmentVariables = true
-//    readSecrets = true
-//}
