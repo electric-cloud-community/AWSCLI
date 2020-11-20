@@ -8,7 +8,9 @@ Revised on November 20, 2020
 
 == Overview
 
-This plugin integrates with aws cli.
+This plugin integrates with AWS CLI.
+
+https://docs.aws.amazon.com/cli/latest/userguide/welcome-versions.html
 
 
 

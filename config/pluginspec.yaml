@@ -4,10 +4,11 @@ pluginInfo:
   # Call pdk showdoc pluginspec to see the list of available fields and their description
   pluginName: 'AWSCLI'
   version: '1.0.0'
-  description: 'Sample plugin description'
-  author: 'none'
-  supportUrl: 'none'
-  category: 'Utilities'
+  description: 'This plugin integrates with AWS CLI'
+  author: 'Polina'
+  supportUrl: 'pshubina@cloudbees.com'
+  category: 'Amazon Web Services'
+  repositoryUrl: 'https://github.com/electric-cloud-community/AWSCLI'
   shell: 'ec-perl'
 
 # Plugin configuration description
