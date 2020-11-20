@@ -6,11 +6,14 @@ import com.cloudbees.pdk.hen.Plugin
 import static com.cloudbees.pdk.hen.Utils.env
 
 class AWSCLI extends Plugin {
-    String name = 'AWSCLI'
 
     static AWSCLI create() {
-        AWSCLI plugin = new AWSCLI()
+        AWSCLI plugin = new AWSCLI(name: 'AWSCLI')
         plugin.configure(plugin.config)
+        return plugin
+    }
+    static AWSCLI createWithoutConfig() {
+        AWSCLI plugin = new AWSCLI(name: 'AWSCLI')
         return plugin
     }
 
@@ -37,7 +40,6 @@ class AWSCLI extends Plugin {
         .roleArn(roleArn())
         .credential(keyId(), secret())
         .region(regionName())
-        .debugLevel('2')
         .cliPath('/usr/local/bin/aws')
 
     RunCLI runCLI = RunCLI.create(this)

@@ -74,6 +74,11 @@ class AWSCLIConfig extends Procedure {
         return this
     }
     
+    AWSCLIConfig sessionName(String sessionName) {
+        this.addParam('sessionName', sessionName)
+        return this
+    }
+    
 
     
     AWSCLIConfig credential(String user, String password) {

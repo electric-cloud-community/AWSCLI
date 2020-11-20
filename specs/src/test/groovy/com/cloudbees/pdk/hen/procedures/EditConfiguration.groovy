@@ -74,6 +74,11 @@ class EditConfiguration extends Procedure {
         return this
     }
     
+    EditConfiguration sessionName(String sessionName) {
+        this.addParam('sessionName', sessionName)
+        return this
+    }
+    
 
     
     EditConfiguration credential(String user, String password) {

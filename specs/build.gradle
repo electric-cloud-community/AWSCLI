@@ -58,7 +58,6 @@ dependencies {
     testImplementation group: 'org.spockframework', name: 'spock-core', version: '1.2-groovy-2.5'
 
     testImplementation platform('software.amazon.awssdk:bom:2.13.58')
-    testImplementation 'software.amazon.awssdk:ec2'
     testImplementation 'software.amazon.awssdk:sts'
 }
 

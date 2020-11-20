@@ -83,7 +83,7 @@ sub _wrapAuth {
     my $authType = $configValues->getRequiredParameter('authType')->getValue();
     my $defRegion = $configValues->getRequiredParameter('region')->getValue();
     $ENV{AWS_DEFAULT_REGION} = $defRegion;
-    if ($authType eq 'sts' || $authType eq 'basic') {
+    if ($authType eq 'sts' || $authType eq 'basic' || $authType eq 'sessionToken') {
         my $cred = $configValues->getRequiredParameter('credential');
         my $clientId = $cred->getUserName();
         my $secret = $cred->getSecretValue();
@@ -92,10 +92,17 @@ sub _wrapAuth {
         $ENV{AWS_SECRET_ACCESS_KEY} = $secret;
 
         if ($authType eq 'sts') {
-
+            logInfo("Role assumption...");
             my $roleArn = $configValues->getRequiredParameter('roleArn');
             my $assumeCli = $self->_cli()->newCommand($awsCli);
-            my $sessionName = "cd-awscli-plugin-session-" . int rand 9999;
+            my $jobId =  $ENV{COMMANDER_JOBID};
+            my $sessionName = $configValues->getParameter('sessionName');
+            unless($sessionName) {
+                $sessionName = "cd-awscli-plugin-session-$jobId";
+            }
+            else {
+                $sessionName = $sessionName->getValue();
+            }
             $assumeCli->addArguments('sts', 'assume-role', '--role-arn', $roleArn, '--role-session-name', $sessionName);
             my $response = $self->_cli()->runCommand($assumeCli);
             if ($response->getCode() != 0) {
@@ -109,14 +116,14 @@ sub _wrapAuth {
             $ENV{AWS_SECRET_ACCESS_KEY} = $c->{Credentials}->{SecretAccessKey};
         }
     }
-    # if ($authType eq 'sessionToken') {
-    #     my $cred = $configValues->getRequiredParameter('credential');
-    #     my $clientId = $cred->getUserName();
-    #     my $secret = $cred->getSecretValue();
-    #
-    #     $ENV{AWS_ACCESS_KEY_ID} = $clientId;
-    #     $ENV{AWS_SECRET_ACCESS_KEY} = $secret;
-    # }
+
+    if ($authType eq 'sessionToken') {
+        logInfo("Using session token...");
+        my $cred = $configValues->getRequiredParameter('sessionToken_credential');
+        my $secret = $cred->getSecretValue();
+
+        $ENV{AWS_SESSION_TOKEN} = $secret;
+    }
 
     my $command = $self->_cli()->newCommand($awsCli);
     if ($configValues->getParameter('debugLevel')->getValue() + 0 > 1) {
@@ -130,13 +137,61 @@ sub _wrapAuth {
     }
     if ($configValues->isParameterExists('envConfig')) {
         my $envRaw = $configValues->getParameter('envConfig')->getValue();
-        for my $pair (split(/\n/, $envRaw)) {
-            my ($key, $value) = split(/=/, $pair, 2);
-            $ENV{$key} = $value;
-            logDebug("Using environment variable $key = $value");
-        }
+        _setEnv($envRaw);
     }
     return $command;
+}
+
+
+sub _setEnv {
+    my ($raw) = @_;
+
+    for my $pair (split(/\n/, $raw)) {
+        chomp $pair;
+        unless($pair) {
+            next;
+        }
+        my ($key, $value) = split(/=/, $pair, 2);
+        $ENV{$key} = $value;
+        logInfo("Using environment variable $key = $value");
+    }
+}
+
+
+sub _parseArguments {
+    my ($arguments) = @_;
+
+    my @args = ();
+    my $isEscaping = 0;
+    my $inQuotes = 0;
+    my $running = "";
+    for my $c (split(//, $arguments)) {
+        if ($c eq '\\') {
+            $isEscaping = 1;
+        }
+        elsif ($c =~ /'|"/ && !$isEscaping) {
+            $inQuotes = !$inQuotes;
+        }
+
+        $isEscaping = 0;
+
+        if ($c =~ /\s/ && !$inQuotes) {
+
+            push @args, $running;
+            $running = '';
+        }
+        else {
+            $running .= $c;
+        }
+    }
+
+    if ($running) {
+        push @args, $running;
+    }
+
+    @args = grep { $_ } @args;
+    @args = map { s/^['"]?//; s/['"]?$//; $_ } @args;
+    return @args;
 }
 
 
@@ -160,16 +215,26 @@ sub runCLI {
 
     my $argsRaw = $p->{arguments};
     logDebug("Got arguments: $argsRaw");
-    my @arguments = split(/\n+/, $argsRaw);
+    my @arguments = _parseArguments($argsRaw);
     logDebug("Split arguments: ", \@arguments);
     for my $arg (@arguments) {
+        chomp $arg;
+        unless($arg) {
+            next;
+        }
         if ($arg =~ /^--/) {
             my ($key, $value) = split(/\s/, $arg, 2);
-            $command->addArguments($key, $value);
+            $command->addArguments($key);
+            if ($value) {
+                $command->addArguments($value);
+            }
         }
         else {
             $command->addArguments($arg);
         }
+    }
+    if ($p->{env}) {
+        _setEnv($p->{env});
     }
     logDebug("Command: ", $command);
     my $res = $cli->runCommand($command);

@@ -31,17 +31,16 @@ configuration:
       type: entry
       label: Description
     - name: cliPath
-      documentation: Path to aws cli.
+      documentation: Path to aws cli, e.g. /usr/bin/aws
       required: true
       type: entry
-      label: Description
+      label: CLI Path
       value: aws
     - name: region
       required: true
       type: entry
       label: Region
-      htmlDocumentation: AWS Region to work with. See the list of available regions <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html" target="_blank">here</a>.
-      # propertyReference: 'ec_dropdowns/regions'
+      htmlDocumentation: AWS Region to work with, e.g. us-west-1. See the list of available regions <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html" target="_blank">here</a>.
     - name: authType
       type: select
       label: Authorization Type
@@ -50,6 +49,7 @@ configuration:
         <b>environment</b> - will rely on machine's environment variables
         <b>basic</b> - requires Access Key ID and Key Secret
         <b>sts</b> - requires Access Key ID, Secret and the Role ARN.
+        <b>sessionToken</b> - requires Access Key ID, Secret and the Session Token.
       required: true
       options:
         - name: Environment
@@ -58,8 +58,8 @@ configuration:
           value: basic
         - name: STS
           value: sts
-#        - name: Session Token
-#          value: sessionToken
+        - name: Session Token
+          value: sessionToken
     - name: roleArn
       label: Role ARN
       documentation: The Amazon Resource Name (ARN) of the role to assume.
@@ -75,14 +75,20 @@ configuration:
       usernameLabel: Access Key ID
       passwordLabel: Access Key Secret
       retypePasswordLabel: Retype Access Key Secret
-#    - name: sessionToken_credential
-#      type: credential
-#      credentialType: secret
-#      label: Session Token
-#      documentation: Session token to use with Access Key ID and the Secret.
-#      required: false
-#      dependsOn: authType
-#      condition: ${authType} == "sessionToken"
+    - name: sessionName
+      label: Session Name
+      type: entry
+      reuqired: false
+      documentation: Session name to use for the role assumption.
+      condition: ${authType} == "sts"
+    - name: sessionToken_credential
+      type: credential
+      credentialType: secret
+      label: Session Token
+      documentation: Session token to use with Access Key ID and the Secret.
+      required: false
+      dependsOn: authType
+      condition: ${authType} == "sessionToken"
     - name: checkConnectionResource
       label: Check Configuration Resource
       documentation: A resource that is used for the checking configuration. AWS ClI must be installed on this resource.
@@ -98,7 +104,7 @@ configuration:
       required: false
     - name: envConfig
       label: Environment Variables
-      documentation: Use this field to set environment variables, e.g. AWS_MAX_ATTEMPTS=2
+      documentation: Use this field to set additional environment variables, e.g. AWS_MAX_ATTEMPTS=2
       required: false
       type: textarea
 
@@ -113,7 +119,8 @@ procedures:
     name: serviceName
     required: true
     type: entry
-    label: Service to call, e.g. sts
+    documentation: Service to call, e.g. sts
+    label: Service Name
   - name: env
     type: textarea
     label: Environment Variables
@@ -124,9 +131,11 @@ procedures:
   - name: arguments
     required: true
     type: textarea
-    label: |
+    label: Arguments
+    documentation: |
       Command arguments, one per line, e.g.
 
-      get-caler-identity
+      describe-instances
+      --page-size 5
   outputParameters:
-    output: 'JSON representation of the deployed application'
+    output: 'Response received from the aws cli'
