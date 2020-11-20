@@ -56,10 +56,10 @@ To create plugin configurations in CloudBees CD, do these steps:
 |Description | Description for the configuration
 
 
-|__**Description**__ | Path to aws cli.
+|__**CLI Path**__ | Path to aws cli, e.g. /usr/bin/aws
 
 
-|__**Region**__ | AWS Region to work with. See the list of available regions 
+|__**Region**__ | AWS Region to work with, e.g. us-west-1. See the list of available regions 
  https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html[here] .
 
 
@@ -71,6 +71,8 @@ To create plugin configurations in CloudBees CD, do these steps:
 
  *sts*  - requires Access Key ID, Secret and the Role ARN.
 
+ *sessionToken*  - requires Access Key ID, Secret and the Session Token.
+
 
 
 |Role ARN | The Amazon Resource Name (ARN) of the role to assume.
@@ -80,13 +82,19 @@ To create plugin configurations in CloudBees CD, do these steps:
 
 
 
+|Session Name | Session name to use for the role assumption.
+
+
+|Session Token | Session token to use with Access Key ID and the Secret.
+
+
 |Check Configuration Resource | A resource that is used for the checking configuration. AWS ClI must be installed on this resource.
 
 
 |Global CLI Flags | Use this field to set global flags, e.g. --no-verify-ssl. One flag per line.
 
 
-|Environment Variables | Use this field to set environment variables, e.g. AWS_MAX_ATTEMPTS=2
+|Environment Variables | Use this field to set additional environment variables, e.g. AWS_MAX_ATTEMPTS=2
 
 
 |Check Connection? | If checked, the connection endpoint and credentials entered as part of the configuration will be tested. If this option is checked, configuration will not be saved if the test fails.
@@ -123,17 +131,20 @@ This procedure runs a commmand using aws cli and the authorization data provided
 | __**Configuration Name**__ | Previously defined configuration for the plugin
 
 
-| __**Service to call, e.g. sts**__ | 
+| __**Service Name**__ | Service to call, e.g. sts
+
 
 | Environment Variables | Use this field to provide additional environment variables to the command.
 This field content and variables from the configuration will be merged and this field will take precedence.
 
 
 
-| __**Command arguments, one per line, e.g.
+| __**Arguments**__ | Command arguments, one per line, e.g.
 
-get-caler-identity
-**__ | 
+describe-instances
+--page-size 5
+
+
 
 |===
 
@@ -145,7 +156,7 @@ get-caler-identity
 |===
 |Parameter |Description
 
-|output |JSON representation of the deployed application
+|output |Response received from the aws cli
 
 |===
 
