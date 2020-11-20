@@ -1,0 +1,176 @@
+Plugin version 1.0.0
+
+Revised on November 20, 2020
+
+
+
+
+
+== Overview
+
+This plugin integrates with aws cli.
+
+
+
+
+
+
+
+
+
+
+
+
+== Plugin configurations
+
+Plugin configurations are sets of parameters that apply
+across some or all of the plugin procedures. They
+reduce repetition of common values, create
+predefined parameter sets for end users, and
+securely store credentials where needed. Each configuration
+is given a unique name that is entered in designated
+parameters on procedures that use them.
+
+
+=== Creating plugin configurations
+
+To create plugin configurations in CloudBees CD, do these steps:
+
+* Go to Adminstration -> Plugins to open the Plugin Manager.
+* Find the AWSCLI-1.0.0 row.
+* Click *Configure* to open the
+     Configurations page.
+* Click *Create Configuration* as per the description of parameters below.
+
+
+
+=== Configuration procedure parameters
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+
+|__**Configuration Name**__ | The name for the created configuration
+
+
+|Description | Description for the configuration
+
+
+|__**Description**__ | Path to aws cli.
+
+
+|__**Region**__ | AWS Region to work with. See the list of available regions 
+ https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html[here] .
+
+
+|__**Authorization Type**__ | Choose the authorization type.
+
+ *environment*  - will rely on machine's environment variables
+
+ *basic*  - requires Access Key ID and Key Secret
+
+ *sts*  - requires Access Key ID, Secret and the Role ARN.
+
+
+
+|Role ARN | The Amazon Resource Name (ARN) of the role to assume.
+
+
+|AWS Credentials | Basic AWS credentials: Access Key ID and Secret.
+
+
+
+|Check Configuration Resource | A resource that is used for the checking configuration. AWS ClI must be installed on this resource.
+
+
+|Global CLI Flags | Use this field to set global flags, e.g. --no-verify-ssl. One flag per line.
+
+
+|Environment Variables | Use this field to set environment variables, e.g. AWS_MAX_ATTEMPTS=2
+
+
+|Check Connection? | If checked, the connection endpoint and credentials entered as part of the configuration will be tested. If this option is checked, configuration will not be saved if the test fails.
+
+
+|Debug Level | This option sets debug level for logs. If info is selected, only summary information will be shown, for debug, there will be some debug information and for trace the whole requests and responses will be shown.
+
+
+|===
+
+
+
+
+
+[[procedures]]
+== Plugin procedures
+
+
+
+
+[[RunCLI]]
+=== Run CLI
+
+
+This procedure runs a commmand using aws cli and the authorization data provided in the plugin's configuration.
+
+
+
+==== Run CLI parameters
+[cols=",",options="header",]
+|===
+|Parameter |Description
+
+| __**Configuration Name**__ | Previously defined configuration for the plugin
+
+
+| __**Service to call, e.g. sts**__ | 
+
+| Environment Variables | Use this field to provide additional environment variables to the command.
+This field content and variables from the configuration will be merged and this field will take precedence.
+
+
+
+| __**Command arguments, one per line, e.g.
+
+get-caler-identity
+**__ | 
+
+|===
+
+
+
+==== Output parameters
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+
+|output |JSON representation of the deployed application
+
+|===
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[[rns]]
+== Release notes
+
+
+=== AWSCLI 1.0.0
+
+- First release.
+
+

@@ -1,0 +1,132 @@
+pluginInfo:
+  # This is default sample specification
+  # Feel free to change it
+  # Call pdk showdoc pluginspec to see the list of available fields and their description
+  pluginName: 'AWSCLI'
+  version: '1.0.0'
+  description: 'Sample plugin description'
+  author: 'none'
+  supportUrl: 'none'
+  category: 'Utilities'
+  shell: 'ec-perl'
+
+# Plugin configuration description
+configuration:
+  # This is a shell used for checking connection
+  shell: 'ec-perl'
+  # A script for checking connection will be generated
+  checkConnection: 'true'
+  # A set of fields will be added to process debug level in the configuration
+  hasDebugLevel: true
+  resourceName: '$[checkConnectionResource]'
+  parameters:
+    - name: config
+      documentation: The name for the created configuration
+      required: true
+      type: entry
+      label: Configuration Name
+    - name: desc
+      documentation: Description for the configuration
+      required: false
+      type: entry
+      label: Description
+    - name: cliPath
+      documentation: Path to aws cli.
+      required: true
+      type: entry
+      label: Description
+      value: aws
+    - name: region
+      required: true
+      type: entry
+      label: Region
+      htmlDocumentation: AWS Region to work with. See the list of available regions <a href="https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.RegionsAndAvailabilityZones.html" target="_blank">here</a>.
+      # propertyReference: 'ec_dropdowns/regions'
+    - name: authType
+      type: select
+      label: Authorization Type
+      htmlDocumentation: |
+        Choose the authorization type.
+        <b>environment</b> - will rely on machine's environment variables
+        <b>basic</b> - requires Access Key ID and Key Secret
+        <b>sts</b> - requires Access Key ID, Secret and the Role ARN.
+      required: true
+      options:
+        - name: Environment
+          value: environment
+        - name: Basic
+          value: basic
+        - name: STS
+          value: sts
+#        - name: Session Token
+#          value: sessionToken
+    - name: roleArn
+      label: Role ARN
+      documentation: The Amazon Resource Name (ARN) of the role to assume.
+      dependsOn: authType
+      condition: ${authType} == "sts"
+      required: false
+    - name: credential
+      documentation: |
+        Basic AWS credentials: Access Key ID and Secret.
+      required: false
+      type: credential
+      label: AWS Credentials
+      usernameLabel: Access Key ID
+      passwordLabel: Access Key Secret
+      retypePasswordLabel: Retype Access Key Secret
+#    - name: sessionToken_credential
+#      type: credential
+#      credentialType: secret
+#      label: Session Token
+#      documentation: Session token to use with Access Key ID and the Secret.
+#      required: false
+#      dependsOn: authType
+#      condition: ${authType} == "sessionToken"
+    - name: checkConnectionResource
+      label: Check Configuration Resource
+      documentation: A resource that is used for the checking configuration. AWS ClI must be installed on this resource.
+      required: false
+      type: entry
+      dependsOn: checkConnection
+      condition: ${checkConnection} == "true"
+      value: local
+    - name: globalFlags
+      label: Global CLI Flags
+      documentation: Use this field to set global flags, e.g. --no-verify-ssl. One flag per line.
+      type: textarea
+      required: false
+    - name: envConfig
+      label: Environment Variables
+      documentation: Use this field to set environment variables, e.g. AWS_MAX_ATTEMPTS=2
+      required: false
+      type: textarea
+
+
+procedures:
+-
+  name: Run CLI
+  description: This procedure runs a commmand using aws cli and the authorization data provided in the plugin's configuration.
+  hasConfig: true
+  parameters:
+  -
+    name: serviceName
+    required: true
+    type: entry
+    label: Service to call, e.g. sts
+  - name: env
+    type: textarea
+    label: Environment Variables
+    required: false
+    documentation: |
+      Use this field to provide additional environment variables to the command.
+      This field content and variables from the configuration will be merged and this field will take precedence.
+  - name: arguments
+    required: true
+    type: textarea
+    label: |
+      Command arguments, one per line, e.g.
+
+      get-caler-identity
+  outputParameters:
+    output: 'JSON representation of the deployed application'

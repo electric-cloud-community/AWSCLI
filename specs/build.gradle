@@ -1,0 +1,87 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+        mavenLocal()
+    }
+    dependencies {
+        classpath "com.cloudbees:hen:+"
+    }
+}
+
+
+plugins {
+    id "com.cloudbees.cd.plugins.specs" version "1.5.13.0"
+}
+
+apply plugin: 'com.cloudbees.cd.plugins.specs-hen'
+
+
+apply plugin: "groovy"
+apply plugin: 'idea'
+apply plugin: 'java'
+
+version = "1.0"
+description = "AWSCLI Specs"
+
+defaultTasks 'test'
+
+repositories {
+    jcenter()
+    mavenCentral()
+    mavenLocal()
+    maven {
+        url "https://dl.bintray.com/ecpluginsdev/maven"
+    }
+}
+
+generateHenClasses {
+    pluginName = 'AWSCLI'
+}
+
+dependencies {
+    implementation 'org.codehaus.groovy:groovy-all:2.5.5'
+    //implementation 'org.codehaus.groovy:groovy-all:3.0.5'
+
+    implementation('com.electriccloud:ec-specs-plugins-core:1.8.1') {
+        exclude(group: "org.codehaus.groovy", module: "groovy-all")
+        exclude(group: "org.spockframework", module: "spock-core")
+    }
+    implementation 'com.jayway.restassured:rest-assured:2.4.0'
+    implementation "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
+
+
+    implementation("com.cloudbees:hen:+") {
+        exclude(group: "org.codehaus.groovy", module: "groovy-all")
+    }
+
+    testImplementation group: 'org.spockframework', name: 'spock-core', version: '1.2-groovy-2.5'
+
+    testImplementation platform('software.amazon.awssdk:bom:2.13.58')
+    testImplementation 'software.amazon.awssdk:ec2'
+    testImplementation 'software.amazon.awssdk:sts'
+}
+
+//
+//test {
+//    def server = System.getenv('COMMANDER_SERVER') ?: findProperty('server') ?: 'localhost'
+//    def password = System.getenv('COMMANDER_PASSWORD') ?: findProperty('password') ?: 'changeme'
+//    systemProperties['COMMANDER_SERVER'] = server
+//    systemProperties['COMMANDER_SERVER'] = findProperty('server') ?: 'localhost'
+//    systemProperties['COMMANDER_PASSWORD'] = password
+//}
+
+//test {
+//    useJUnitPlatform()
+//}
+
+
+sendAllureReports {
+    projectName = 'awscli'
+}
+
+//configureTests {
+//    environmentName = findProperty('envName') ?: 'default'
+//    readEnvironmentVariables = true
+//    readSecrets = true
+//}
