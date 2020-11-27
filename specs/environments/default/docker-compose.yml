@@ -17,6 +17,19 @@ services:
       - maven.org:127.0.0.1
       - repo1.maven.org:127.0.0.1
       - jcenter.bintray.com:127.0.0.1
+  aws:
+    image: "electricflow/awscli:latest"
+    ports:
+      - "7808:7808"
+    networks:
+      - external
+    container_name: awscli
+    hostname: "awscli"
+    tty: true
+    extra_hosts:
+      - maven.org:127.0.0.1
+      - repo1.maven.org:127.0.0.1
+      - jcenter.bintray.com:127.0.0.1
 
 networks:
   external:

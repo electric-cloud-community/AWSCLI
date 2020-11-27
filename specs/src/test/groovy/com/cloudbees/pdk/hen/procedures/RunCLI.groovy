@@ -11,6 +11,13 @@ class RunCLI extends Procedure {
         return new RunCLI(procedureName: 'Run CLI', plugin: plugin, )
     }
 
+
+    RunCLI flush() {
+        this.flushParams()
+        return this
+    }
+    
+
     //Generated
     
     RunCLI arguments(String arguments) {

@@ -17,6 +17,13 @@ class EditConfiguration extends Procedure {
         ])
     }
 
+
+    EditConfiguration flush() {
+        this.flushParams()
+        return this
+    }
+    
+
     //Generated
     
     EditConfiguration authType(String authType) {

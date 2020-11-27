@@ -17,6 +17,13 @@ class AWSCLIConfig extends Procedure {
         ])
     }
 
+
+    AWSCLIConfig flush() {
+        this.flushParams()
+        return this
+    }
+    
+
     //Generated
     
     AWSCLIConfig authType(String authType) {

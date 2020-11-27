@@ -3,6 +3,9 @@ buildscript {
         mavenCentral()
         jcenter()
         mavenLocal()
+        maven {
+            url "https://dl.bintray.com/ecpluginsdev/maven"
+        }
     }
     dependencies {
         classpath "com.cloudbees:hen:+"
@@ -27,9 +30,9 @@ description = "AWSCLI Specs"
 defaultTasks 'test'
 
 repositories {
+    mavenLocal()
     jcenter()
     mavenCentral()
-    mavenLocal()
     maven {
         url "https://dl.bintray.com/ecpluginsdev/maven"
     }

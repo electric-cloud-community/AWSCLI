@@ -8,13 +8,19 @@ import static com.cloudbees.pdk.hen.Utils.env
 class AWSCLI extends Plugin {
 
     static AWSCLI create() {
-        AWSCLI plugin = new AWSCLI(name: 'AWSCLI')
+        AWSCLI plugin = new AWSCLI(name: 'AWSCLI', defaultResource: 'awscli')
+        createResource()
         plugin.configure(plugin.config)
         return plugin
     }
     static AWSCLI createWithoutConfig() {
-        AWSCLI plugin = new AWSCLI(name: 'AWSCLI')
+        AWSCLI plugin = new AWSCLI(name: 'AWSCLI', defaultResource: 'awscli')
+        createResource()
         return plugin
+    }
+
+    static private void createResource() {
+        ServerHandler.getInstance().setupResource("awscli", env("RESOURCE"), env("RESOURCE_PORT") as int)
     }
 
     static String keyId() {
