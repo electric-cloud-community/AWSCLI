@@ -44,7 +44,6 @@ generateHenClasses {
 
 dependencies {
     implementation 'org.codehaus.groovy:groovy-all:2.5.5'
-    //implementation 'org.codehaus.groovy:groovy-all:3.0.5'
 
     implementation('com.electriccloud:ec-specs-plugins-core:1.8.1') {
         exclude(group: "org.codehaus.groovy", module: "groovy-all")
@@ -54,7 +53,7 @@ dependencies {
     implementation "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
 
 
-    implementation("com.cloudbees:hen:+") {
+    implementation("com.cloudbees:hen:1.0.9") {
         exclude(group: "org.codehaus.groovy", module: "groovy-all")
     }
 
