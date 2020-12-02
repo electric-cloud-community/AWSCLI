@@ -31,6 +31,7 @@ class ConfigureSpec extends PluginSpockTestSupport {
             .credential(AWSCLI.keyId(), AWSCLI.secret())
             .checkConnection(true)
             .region(AWSCLI.regionName())
+            .checkConnectionResource('awscli')
             .runNaked()
         then:
         assert r.successful
@@ -48,6 +49,7 @@ class ConfigureSpec extends PluginSpockTestSupport {
             .roleArn(AWSCLI.roleArn())
             .checkConnection(true)
             .region(AWSCLI.regionName())
+            .checkConnectionResource('awscli')
             .runNaked()
         then:
         assert r.successful
@@ -65,6 +67,7 @@ class ConfigureSpec extends PluginSpockTestSupport {
             .credential(AWSCLI.keyId(), AWSCLI.secret())
             .roleArn(AWSCLI.roleArn())
             .sessionName('my-session')
+            .checkConnectionResource('awscli')
             .checkConnection(true)
             .region(AWSCLI.regionName())
             .runNaked()
@@ -101,6 +104,7 @@ class ConfigureSpec extends PluginSpockTestSupport {
             .sessionToken_credential("", response.credentials().sessionToken())
             .sessionName('my-session')
             .checkConnection(true)
+            .checkConnectionResource('awscli')
             .region(AWSCLI.regionName())
             .runNaked()
         then:
@@ -120,6 +124,7 @@ class ConfigureSpec extends PluginSpockTestSupport {
             .credential('wrong', 'wrong')
             .checkConnection(true)
             .region(AWSCLI.regionName())
+            .checkConnectionResource('awscli')
             .runNaked()
         then:
         assert !r.successful
