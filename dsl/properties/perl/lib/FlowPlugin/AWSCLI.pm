@@ -243,10 +243,25 @@ sub runCLI {
         die "Failed to execute command: code " . $res->getCode() . ", error: " . $res->getStderr();
     }
     my $stdout = $res->getStdout();
-    logInfo("Response: $stdout");
-    $sr->setOutputParameter('output', $stdout);
-    my $summary = length($stdout) > 200 ? substr($stdout, 0, 200) . '[TRUNCATED]' : $stdout;
-    $sr->setJobStepSummary("Response: $summary");
+
+    my $outputFile = $p->{outputFile};
+    if ($outputFile) {
+        logInfo("Got response");
+        # Probably there is something secret in that stdout so let's play it cool
+        open my $fh, ">", $outputFile or die "Cannot open $outputFile for writing: $!";
+        print $fh $stdout;
+        close $fh;
+        logInfo("Saved response to the file $outputFile");
+        $sr->setOutputParameter('output', '');
+        $sr->setJobStepSummary("Saved response to the file $outputFile");
+    }
+    else {
+        logInfo("Response: $stdout");
+        $sr->setOutputParameter('output', $stdout);
+        my $summary = length($stdout) > 200 ? substr($stdout, 0, 200) . '[TRUNCATED]' : $stdout;
+        $sr->setJobStepSummary("Response: $summary");
+    }
+
 }
 ## === step ends ===
 # Please do not remove the marker above, it is used to place new procedures into this file.
