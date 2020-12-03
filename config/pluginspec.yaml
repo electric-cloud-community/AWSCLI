@@ -3,7 +3,7 @@ pluginInfo:
   # Feel free to change it
   # Call pdk showdoc pluginspec to see the list of available fields and their description
   pluginName: 'AWSCLI'
-  version: '1.0.0'
+  version: '1.1.0'
   description: 'This plugin integrates with AWS CLI'
   author: 'Polina'
   supportUrl: 'pshubina@cloudbees.com'
@@ -141,5 +141,10 @@ procedures:
 
       describe-instances
       --page-size 5
+  - name: outputFile
+    type: entry
+    required: false
+    label: Output File
+    documentation: If the value is provided, the command output will be saved to this file instead of the output parameter. The output parameter will be empty.
   outputParameters:
     output: 'Response received from the aws cli'

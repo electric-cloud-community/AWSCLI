@@ -1,6 +1,6 @@
-Plugin version 1.0.0
+Plugin version 1.1.0
 
-Revised on November 25, 2020
+Revised on December 03, 2020
 
 
 
@@ -39,7 +39,7 @@ parameters on procedures that use them.
 To create plugin configurations in CloudBees CD, do these steps:
 
 * Go to Adminstration -> Plugins to open the Plugin Manager.
-* Find the AWSCLI-1.0.0 row.
+* Find the AWSCLI-1.1.0 row.
 * Click *Configure* to open the
      Configurations page.
 * Click *Create Configuration* as per the description of parameters below.
@@ -148,6 +148,9 @@ describe-instances
 
 
 
+| Output File | If the value is provided, the command output will be saved to this file instead of the output parameter. The output parameter will be empty.
+
+
 |===
 
 
@@ -180,6 +183,11 @@ describe-instances
 
 [[rns]]
 == Release notes
+
+
+=== AWSCLI 1.1.0
+
+- Added "Save output to file" parameter.
 
 
 === AWSCLI 1.0.0

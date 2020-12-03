@@ -78,4 +78,14 @@ class RunCLISpec extends PluginSpockTestSupport {
         assert r.jobLog =~ /--no-verify-ssl/
     }
 
+    def 'with output file'() {
+        when:
+        def r = runCLI.serviceName("sts").outputFile("/tmp/response.txt").arguments("get-caller-identity").run()
+        then:
+        assert r.successful
+        and:
+        def output = ServerHandler.getInstance().runCommand("cat /tmp/response.txt", "sh", "awscli")
+        assert output.jobLog =~ /Arn/
+    }
+
 }

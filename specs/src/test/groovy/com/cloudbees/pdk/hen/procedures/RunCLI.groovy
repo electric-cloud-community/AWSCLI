@@ -35,6 +35,11 @@ class RunCLI extends Procedure {
         return this
     }
     
+    RunCLI outputFile(String outputFile) {
+        this.addParam('outputFile', outputFile)
+        return this
+    }
+    
     RunCLI serviceName(String serviceName) {
         this.addParam('serviceName', serviceName)
         return this
