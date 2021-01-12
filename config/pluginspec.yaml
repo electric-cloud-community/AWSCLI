@@ -3,7 +3,7 @@ pluginInfo:
   # Feel free to change it
   # Call pdk showdoc pluginspec to see the list of available fields and their description
   pluginName: 'AWSCLI'
-  version: '1.1.0'
+  version: '1.2.0'
   description: 'This plugin integrates with AWS CLI'
   author: 'Polina'
   supportUrl: 'pshubina@cloudbees.com'
@@ -148,3 +148,22 @@ procedures:
     documentation: If the value is provided, the command output will be saved to this file instead of the output parameter. The output parameter will be empty.
   outputParameters:
     output: 'Response received from the aws cli'
+
+
+- name: Run Script
+  description: This procedure allows to run a user-defined Perl script with the pre-built authorization data
+  hasConfig: true
+  parameters:
+    - name: script
+      required: true
+      type: textarea
+      label: Script
+      documentation: |
+        Perl script to execute from the context of the plugin, e.g.
+
+        my $c = $self->wrapAuth();
+        $c->addArguments('sts', 'get-caller-identity');
+        my $r = $cli->runCommand($c);
+        print Dumper $r;
+  outputParameters:
+    output: Response from the script

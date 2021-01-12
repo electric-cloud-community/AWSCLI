@@ -1,6 +1,6 @@
-Plugin version 1.1.0
+Plugin version 1.2.0
 
-Revised on December 03, 2020
+Revised on January 12, 2021
 
 
 
@@ -39,7 +39,7 @@ parameters on procedures that use them.
 To create plugin configurations in CloudBees CD, do these steps:
 
 * Go to Adminstration -> Plugins to open the Plugin Manager.
-* Find the AWSCLI-1.1.0 row.
+* Find the AWSCLI-1.2.0 row.
 * Click *Configure* to open the
      Configurations page.
 * Click *Create Configuration* as per the description of parameters below.
@@ -169,6 +169,49 @@ describe-instances
 
 
 
+[[RunScript]]
+=== Run Script
+
+
+This procedure allows to run a user-defined Perl script with the pre-built authorization data
+
+
+
+==== Run Script parameters
+[cols=",",options="header",]
+|===
+|Parameter |Description
+
+| __**Configuration Name**__ | Previously defined configuration for the plugin
+
+
+| __**Script**__ | Perl script to execute from the context of the plugin, e.g.
+
+my $c = $self->wrapAuth();
+$c->addArguments('sts', 'get-caller-identity');
+my $r = $cli->runCommand($c);
+print Dumper $r;
+
+
+
+|===
+
+
+
+==== Output parameters
+
+[cols=",",options="header",]
+|===
+|Parameter |Description
+
+|output |Response from the script
+
+|===
+
+
+
+
+
 
 
 
@@ -183,6 +226,11 @@ describe-instances
 
 [[rns]]
 == Release notes
+
+
+=== AWSCLI 1.2.0
+
+- Added "Run Script" procedure.
 
 
 === AWSCLI 1.1.0

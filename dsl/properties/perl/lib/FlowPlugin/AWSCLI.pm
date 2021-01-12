@@ -39,7 +39,7 @@ sub checkConnection {
     eval {
         # Use $configValues to check connection, e.g. perform some ping request
         # my $client = Client->new($configValues); $client->ping();
-        my $command = $self->_wrapAuth();
+        my $command = $self->wrapAuth();
         $command->addArguments("sts", "get-caller-identity");
         my $res = $self->_cli()->runCommand($command);
         if ($res->getCode() != 0) {
@@ -69,7 +69,7 @@ sub _cli {
     return $self->{cli};
 }
 
-sub _wrapAuth {
+sub wrapAuth {
     my ($self) = @_;
 
     my $context = $self->getContext();
@@ -83,46 +83,49 @@ sub _wrapAuth {
     my $authType = $configValues->getRequiredParameter('authType')->getValue();
     my $defRegion = $configValues->getRequiredParameter('region')->getValue();
     $ENV{AWS_DEFAULT_REGION} = $defRegion;
-    if ($authType eq 'sts' || $authType eq 'basic' || $authType eq 'sessionToken') {
-        my $cred = $configValues->getRequiredParameter('credential');
-        my $clientId = $cred->getUserName();
-        my $secret = $cred->getSecretValue();
 
-        $ENV{AWS_ACCESS_KEY_ID} = $clientId;
-        $ENV{AWS_SECRET_ACCESS_KEY} = $secret;
+    unless($ENV{AWS_ACCESS_KEY_ID} && $ENV{AWS_SECRET_ACCESS_KEY}) {
+        if ($authType eq 'sts' || $authType eq 'basic' || $authType eq 'sessionToken') {
+            my $cred = $configValues->getRequiredParameter('credential');
+            my $clientId = $cred->getUserName();
+            my $secret = $cred->getSecretValue();
 
-        if ($authType eq 'sts') {
-            logInfo("Role assumption...");
-            my $roleArn = $configValues->getRequiredParameter('roleArn');
-            my $assumeCli = $self->_cli()->newCommand($awsCli);
-            my $jobId =  $ENV{COMMANDER_JOBID};
-            my $sessionName = $configValues->getParameter('sessionName');
-            unless($sessionName) {
-                $sessionName = "cd-awscli-plugin-session-$jobId";
+            $ENV{AWS_ACCESS_KEY_ID} = $clientId;
+            $ENV{AWS_SECRET_ACCESS_KEY} = $secret;
+
+            if ($authType eq 'sts') {
+                logInfo("Role assumption...");
+                my $roleArn = $configValues->getRequiredParameter('roleArn');
+                my $assumeCli = $self->_cli()->newCommand($awsCli);
+                my $jobId = $ENV{COMMANDER_JOBID};
+                my $sessionName = $configValues->getParameter('sessionName');
+                unless ($sessionName) {
+                    $sessionName = "cd-awscli-plugin-session-$jobId";
+                }
+                else {
+                    $sessionName = $sessionName->getValue();
+                }
+                $assumeCli->addArguments('sts', 'assume-role', '--role-arn', $roleArn, '--role-session-name', $sessionName);
+                my $response = $self->_cli()->runCommand($assumeCli);
+                if ($response->getCode() != 0) {
+                    die "Failed to assume role $roleArn: " . $response->getStderr();
+                }
+                my $output = $response->getStdout();
+                logTrace("Assume response $output");
+                my $c = decode_json($output);
+                $ENV{AWS_SESSION_TOKEN} = $c->{Credentials}->{SessionToken};
+                $ENV{AWS_ACCESS_KEY_ID} = $c->{Credentials}->{AccessKeyId};
+                $ENV{AWS_SECRET_ACCESS_KEY} = $c->{Credentials}->{SecretAccessKey};
             }
-            else {
-                $sessionName = $sessionName->getValue();
-            }
-            $assumeCli->addArguments('sts', 'assume-role', '--role-arn', $roleArn, '--role-session-name', $sessionName);
-            my $response = $self->_cli()->runCommand($assumeCli);
-            if ($response->getCode() != 0) {
-                die "Failed to assume role $roleArn: " . $response->getStderr();
-            }
-            my $output = $response->getStdout();
-            logTrace("Assume response $output");
-            my $c = decode_json($output);
-            $ENV{AWS_SESSION_TOKEN} = $c->{Credentials}->{SessionToken};
-            $ENV{AWS_ACCESS_KEY_ID} = $c->{Credentials}->{AccessKeyId};
-            $ENV{AWS_SECRET_ACCESS_KEY} = $c->{Credentials}->{SecretAccessKey};
         }
-    }
 
-    if ($authType eq 'sessionToken') {
-        logInfo("Using session token...");
-        my $cred = $configValues->getRequiredParameter('sessionToken_credential');
-        my $secret = $cred->getSecretValue();
+        if ($authType eq 'sessionToken') {
+            logInfo("Using session token...");
+            my $cred = $configValues->getRequiredParameter('sessionToken_credential');
+            my $secret = $cred->getSecretValue();
 
-        $ENV{AWS_SESSION_TOKEN} = $secret;
+            $ENV{AWS_SESSION_TOKEN} = $secret;
+        }
     }
 
     my $command = $self->_cli()->newCommand($awsCli);
@@ -208,7 +211,7 @@ sub runCLI {
 
     my $cli = $self->_cli();
 
-    my $command = $self->_wrapAuth();
+    my $command = $self->wrapAuth();
 
     my $service = $p->{serviceName};
     $command->addArguments($service);
@@ -263,6 +266,35 @@ sub runCLI {
     }
 
 }
+# Auto-generated method for the procedure Run Script/Run Script
+# Add your code into this method and it will be called when step runs
+# $self - reference to the plugin object
+# $p - step parameters
+# Parameter: config
+# Parameter: script
+
+# $sr - StepResult object
+sub runScript {
+    my ($self, $p, $sr) = @_;
+
+    my $script = $p->{script};
+    # do NOT remove this variable
+    my $cli = $self->_cli();
+
+    my $response = eval "$script";
+    if ($@) {
+        die "Failed to execute the script: $@";
+    }
+    if(ref $response) {
+        $response = encode_json($response);
+    }
+    print "Response: $response\n";
+    $sr->setOutputParameter('response', $response);
+    my $summary = length($response) > 200 ? substr($response, 0, 200) . '...' : $response;
+    $sr->setJobStepSummary("Response: $summary");
+}
+
+
 ## === step ends ===
 # Please do not remove the marker above, it is used to place new procedures into this file.
 
