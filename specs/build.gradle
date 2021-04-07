@@ -1,14 +1,12 @@
 buildscript {
     repositories {
         mavenCentral()
-        jcenter()
-        mavenLocal()
         maven {
-            url "https://dl.bintray.com/ecpluginsdev/maven"
+            url "https://repo.cloudbees.com/content/repositories/dev-connect"
         }
     }
     dependencies {
-        classpath "com.cloudbees:hen:+"
+        classpath "com.cloudbees.cd.plugins:hen:1.3.1"
     }
 }
 
@@ -30,12 +28,12 @@ description = "AWSCLI Specs"
 defaultTasks 'test'
 
 repositories {
-    mavenLocal()
-    jcenter()
     mavenCentral()
+
     maven {
-        url "https://dl.bintray.com/ecpluginsdev/maven"
+        url "https://repo.cloudbees.com/content/repositories/dev-connect"
     }
+
 }
 
 generateHenClasses {
@@ -45,7 +43,7 @@ generateHenClasses {
 dependencies {
     implementation 'org.codehaus.groovy:groovy-all:2.5.5'
 
-    implementation('com.electriccloud:ec-specs-plugins-core:1.8.1') {
+    implementation('com.electriccloud:ec-specs-plugins-core:1.9.2') {
         exclude(group: "org.codehaus.groovy", module: "groovy-all")
         exclude(group: "org.spockframework", module: "spock-core")
     }
@@ -53,7 +51,7 @@ dependencies {
     implementation "org.codehaus.groovy.modules.http-builder:http-builder:0.7.1"
 
 
-    implementation("com.cloudbees:hen:1.0.9") {
+    implementation("com.cloudbees.cd.plugins:hen:1.3.1") {
         exclude(group: "org.codehaus.groovy", module: "groovy-all")
     }
 
