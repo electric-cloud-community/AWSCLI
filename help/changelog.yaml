@@ -4,3 +4,5 @@
   - Added "Save output to file" parameter.
 1.2.0:
   - Added "Run Script" procedure.
+1.2.1:
+  - Migrated tests dependencies from Bintray.
