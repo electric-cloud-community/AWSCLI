@@ -3,7 +3,7 @@ pluginInfo:
   # Feel free to change it
   # Call pdk showdoc pluginspec to see the list of available fields and their description
   pluginName: 'AWSCLI'
-  version: '1.2.1'
+  version: '1.2.2'
   description: 'This plugin integrates with AWS CLI'
   author: 'Polina'
   supportUrl: 'pshubina@cloudbees.com'

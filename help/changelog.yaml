@@ -6,3 +6,5 @@
   - Added "Run Script" procedure.
 1.2.1:
   - Migrated tests dependencies from Bintray.
+1.2.2:
+  - Upgraded plugin to support new configurations.

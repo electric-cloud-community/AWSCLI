@@ -1,6 +1,6 @@
-Plugin version 1.2.1
+Plugin version 1.2.2
 
-Revised on April 07, 2021
+Revised on October 18, 2021
 
 
 
@@ -39,7 +39,7 @@ parameters on procedures that use them.
 To create plugin configurations in CloudBees CD, do these steps:
 
 * Go to Adminstration -> Plugins to open the Plugin Manager.
-* Find the AWSCLI-1.2.1 row.
+* Find the AWSCLI-1.2.2 row.
 * Click *Configure* to open the
      Configurations page.
 * Click *Create Configuration* as per the description of parameters below.
@@ -226,6 +226,11 @@ print Dumper $r;
 
 [[rns]]
 == Release notes
+
+
+=== AWSCLI 1.2.2
+
+- Upgraded plugin to support new configurations.
 
 
 === AWSCLI 1.2.1
